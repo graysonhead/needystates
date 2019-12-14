@@ -2,6 +2,23 @@ from copy import deepcopy
 from .need import Need
 from .operations import StateOperations
 
+
+def smart_append(target_list, value):
+    """
+    Only append value to a list if it is not None
+    :param target_list:
+        List to be mutated
+    :param value:
+        Value to conditionally add. If value is a list, values will be appended individually
+    """
+    if value is not None:
+        if isinstance(value, list):
+            for li in value:
+                target_list.append(li)
+        else:
+            target_list.append(value)
+
+
 class State(object):
 
     def __init__(self, config_dictionary, parent_states=None, address_path=None, state_name=None):
@@ -69,18 +86,47 @@ class State(object):
         return rendered_dict
 
     def determine_needs(self, other, strict=False):
+        """
+        Pass another instance of State to this method in order to generate a list of needs.
+        :param other:
+            An instance of State, or subclassed Instance of State
+        :param strict:
+            If Strict is True, DELETE states will be created for attributes present in other but not present in self
+        :return:
+            A list of Need objects representing needed changes between the two states
+        """
         needs_list = []
         for attribute in self.config_keys:
             value = getattr(self, attribute)
             if isinstance(value, State):
-                needs_list = needs_list + self._determine_needs_substate(attribute,
-                                                                         other,
-                                                                         strict=strict)
+                smart_append(needs_list, self._determine_needs_substate(attribute,
+                                                                        other,
+                                                                        strict=strict))
             elif isinstance(value, int) or isinstance(value, str):
-                needs_list.append(self._determine_needs_int_or_str(attribute, other))
+                smart_append(needs_list, self._determine_needs_int_or_str(attribute, other))
+        if strict:
+            for attribute in other.config_keys:
+                if getattr(self, attribute, None) is None:
+                    old_value = getattr(other, attribute)
+                    smart_append(needs_list, Need(
+                        attribute,
+                        StateOperations.DELETE,
+                        address_path=self.address_path,
+                        parent_states=self.parent_states,
+                        old_value=old_value
+                    ))
         return needs_list
 
     def _determine_needs_int_or_str(self, attribute, other):
+        """
+        Called by determine needs when it encounters an int or str
+        :param attribute:
+            Name of the attribute being compared
+        :param other:
+            The other State class being compared
+        :return:
+            Need object is returned if the states differ
+        """
         our_value = getattr(self, attribute, None)
         other_value = getattr(other, attribute, None)
         if our_value:
@@ -95,14 +141,21 @@ class State(object):
                 )
 
     def _determine_needs_substate(self, attribute, other, strict=False):
+        """
+        Called by determine_needs to initiate tail recursion
+        :param attribute:
+            attribute of the sub_state
+        :param other:
+            The other parent state
+        :param strict:
+            If strict is True, DELETE operations will be created
+        :return:
+        """
         our_value = getattr(self, attribute, None)
         other_value = getattr(other, attribute, None)
         if other_value is None:
             other_value = State({})
         return our_value.determine_needs(other_value, strict=strict)
-
-
-
 
     def __eq__(self, other):
         """

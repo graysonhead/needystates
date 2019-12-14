@@ -76,7 +76,7 @@ class TestStateNeedGeneration(TestCase):
 
     def test_nested_need_generation_str(self):
         state1 = State({'sub_state': {'attribute': 'newval'}}, state_name='statetest')
-        state2 = State({'sub_state': {'attribute': 'oldval'}}, state_name='statetest')
+        state2 = State({'irrelevant_attribute': False, 'sub_state': {'attribute': 'oldval'}}, state_name='statetest')
         result = state1.determine_needs(state2)
         expected = Need('attribute',
                         StateOperations.SET,
@@ -84,3 +84,4 @@ class TestStateNeedGeneration(TestCase):
                         old_value='oldval',
                         parent_states=['statetest', 'sub_state'],
                         )
+        self.assertEqual(expected, result[0])
