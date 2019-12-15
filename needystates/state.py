@@ -45,7 +45,8 @@ class State(object):
         else:
             self.name = ''
         sub_module_parent_chain = self.parent_states
-        sub_module_parent_chain.append(self.name)
+        if self.name:
+            sub_module_parent_chain.append(self.name)
         for k, v in config_dictionary.items():
             self.config_keys.append(k)
             if isinstance(v, dict):
