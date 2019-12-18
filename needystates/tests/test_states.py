@@ -97,6 +97,18 @@ class TestStateNeedGeneration(TestCase):
                         parent_states=['statetest'])
         self.assertEqual(expected, result[0])
 
+    def test_need_basic_generation_str_with_metadata(self):
+        state1 = State({'attribute': 'first_state'}, state_name='statetest', metadata={'attr': 'key'})
+        state2 = State({'attribute': 'second_state'}, state_name='statetest')
+        result = state1.determine_needs(state2)
+        expected = Need('attribute',
+                        StateOperations.SET,
+                        value='first_state',
+                        old_value='second_state',
+                        parent_states=['statetest'],
+                        metadata={'attr': 'key'})
+        self.assertEqual(expected, result[0])
+
     def test_need_generation_absent_cstate(self):
         state1 = State({'attribute': 'first_state'}, state_name='statetest')
         state2 = State({}, state_name='statetest')

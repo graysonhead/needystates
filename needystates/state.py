@@ -21,7 +21,11 @@ def smart_append(target_list, value):
 
 class State(object):
 
-    def __init__(self, config_dictionary, parent_states=None, address_path=None, state_name=None):
+    def __init__(self, config_dictionary,
+                 parent_states=None,
+                 address_path=None,
+                 state_name=None,
+                 metadata: dict = {}):
         """
         Dict-like data structures are de-seralized into states for comparison
         :param config_dictionary:
@@ -62,6 +66,7 @@ class State(object):
                 setattr(self, k, temp_list)
             else:
                 setattr(self, k, v)
+        self.metadata = metadata
 
     def render_dict(self):
         """
@@ -114,7 +119,8 @@ class State(object):
                         StateOperations.DELETE,
                         address_path=self.address_path,
                         parent_states=self.parent_states,
-                        old_value=old_value
+                        old_value=old_value,
+                        metadata=self.metadata
                     ))
         return needs_list
 
@@ -138,7 +144,8 @@ class State(object):
                     address_path=self.address_path,
                     parent_states=self.parent_states,
                     value=our_value,
-                    old_value=other_value
+                    old_value=other_value,
+                    metadata=self.metadata
                 )
 
     def _determine_needs_substate(self, attribute, other, strict=False):

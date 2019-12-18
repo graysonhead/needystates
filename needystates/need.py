@@ -7,7 +7,8 @@ class Need(object):
                  parent_states=None,
                  value=None,
                  old_value=None,
-                 description=''):
+                 description='',
+                 metadata: dict = {}):
         """
         Needs are generated to describe the path to get from one configuration to another.
 
@@ -32,6 +33,9 @@ class Need(object):
 
         :param description:
             (Optional) Provide a more detailed description for the need
+
+        :param metadata:
+            (Optional) Provide additional Key/value metadata (Does not affect the behavior of Needystates state engine
         """
         self.attribute = attribute
         self.operation = operation
@@ -47,6 +51,7 @@ class Need(object):
         self.value = value
         self.old_value = old_value
         self.description = description
+        self.metadata = metadata
 
     def get_short_string(self):
         """
@@ -85,4 +90,5 @@ class Need(object):
                                                                          'parent_states',
                                                                          'value',
                                                                          'old_value',
-                                                                         'description'])
+                                                                         'description',
+                                                                         'metadata'])
