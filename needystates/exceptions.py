@@ -1,0 +1,2 @@
+class NeedyStatesException(Exception):
+    pass
