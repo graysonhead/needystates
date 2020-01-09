@@ -151,3 +151,16 @@ class TestStateNeedGeneration(TestCase):
                         parent_states=['statetest'],
                         )
         self.assertEqual(expected, result[0])
+
+    def test_attribute_descriptor_selection(self):
+        class TestState(State):
+            attribute_descriptors = {
+                'test': {
+                    StateOperations.SET: 'This is a custom descriptor'
+                }
+            }
+        state1 = TestState({'test': True}, state_name='teststate')
+        state2 = TestState({'test': False}, state_name='teststate')
+        needs = state1.determine_needs(state2)
+        result = needs[0].get_long_string()
+        self.assertEqual('teststate.test.SET=True\n----------\nThis is a custom descriptor', result)

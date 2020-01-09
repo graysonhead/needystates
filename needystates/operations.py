@@ -1,7 +1,11 @@
 from enum import Enum
 
 
-class StateOperations(Enum):
+class Operations(Enum):
+    pass
+
+
+class StateOperations(Operations):
     """
     Determine what operation should be performed to satisfy the need
     """

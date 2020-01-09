@@ -23,7 +23,16 @@ class TestNeeds(TestCase):
 
     def test_long_string_generation(self):
         nd = Need('url', StateOperations.SET, value='https://example.com',
-                  description="This sets and does things with other things braaaah")
+                  description="This sets and does things with other things")
         result = nd.get_long_string()
-        self.assertEqual('url.SET=https://example.com\n----------\nThis sets and does things with other things braaaah',
+        self.assertEqual('url.SET=https://example.com\n----------\nThis sets and does things with other things',
                          result)
+
+    def test_long_string_templating(self):
+        nd = Need('url',
+                  StateOperations.SET,
+                  value='newvalue',
+                  old_value='oldvalue',
+                  description="This will change #old_value to #value")
+        result = nd.get_long_string()
+        self.assertEqual('url.SET=newvalue\n----------\nThis will change oldvalue to newvalue', result)
