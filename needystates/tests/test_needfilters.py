@@ -65,3 +65,15 @@ class TestNeedFilters(TestCase):
         filter = ValueTypeFilter(str)
         result = filter.check_filter(need)
         self.assertEqual(False, result)
+
+    def test_value_equals_filter(self):
+        need = Need('testval', StateOperations.SET, value=False)
+        filter = ValueIsFilter(False)
+        result = filter.check_filter(need)
+        self.assertEqual(True, result)
+
+    def test_value_equals_filter_negative(self):
+        need = Need('testval', StateOperations.SET, value=False)
+        filter = ValueIsFilter(True)
+        result = filter.check_filter(need)
+        self.assertEqual(False, result)
