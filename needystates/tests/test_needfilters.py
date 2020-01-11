@@ -77,3 +77,27 @@ class TestNeedFilters(TestCase):
         filter = ValueIsFilter(True)
         result = filter.check_filter(need)
         self.assertEqual(False, result)
+
+    def test_parent_states_contain_filters(self):
+        need = Need('testval', StateOperations.SET, parent_states=['one', 'two'])
+        filter = ParentStatesContainsFilter('one')
+        result = filter.check_filter(need)
+        self.assertEqual(True, result)
+
+    def test_parent_states_contain_filters_negative(self):
+        need = Need('testval', StateOperations.SET, parent_states=['one', 'two'])
+        filter = ParentStatesContainsFilter('three')
+        result = filter.check_filter(need)
+        self.assertEqual(False, result)
+
+    def test_parent_states_exact_filters(self):
+        need = Need('testval', StateOperations.SET, parent_states=['one', 'two'])
+        filter = ParentStatesExactFilter(['one', 'two'])
+        result = filter.check_filter(need)
+        self.assertEqual(True, result)
+
+    def test_parent_states_exact_filters_negative(self):
+        need = Need('testval', StateOperations.SET, parent_states=['one', 'two'])
+        filter = ParentStatesExactFilter(['one', 'two', 'three'])
+        result = filter.check_filter(need)
+        self.assertEqual(False, result)

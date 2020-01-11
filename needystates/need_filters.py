@@ -86,3 +86,15 @@ class ValueTypeFilter(NeedFilter):
             return True
         else:
             return False
+
+
+class ValueIsFilter(NeedFilter):
+
+    def __init__(self, filter_object):
+        self.filter_object = filter_object
+
+    def check_filter(self, need):
+        if need.value == self.filter_object:
+            return True
+        else:
+            return False
