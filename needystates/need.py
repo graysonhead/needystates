@@ -73,7 +73,7 @@ class Need(object):
             parent_states = f"{parent_states}."
         else:
             parent_states = ''
-        if self.value:
+        if self.value or self.value is False:
             value = f"={self.value}"
         else:
             value = ''

@@ -63,6 +63,18 @@ class TestStateRendering(TestCase):
 
 class TestStateNeedGeneration(TestCase):
 
+    def test_false_value_need_generation(self):
+        state1 = State({'attribute': False}, state_name='statetest', address_path=['module1'])
+        state2 = State({'attribute': True}, state_name='statetest', address_path=['module1'])
+        result = state1.determine_needs(state2)
+        expected = Need('attribute',
+                        StateOperations.SET,
+                        value=False,
+                        old_value=True,
+                        parent_states=['statetest'],
+                        address_path=['module1'])
+        self.assertEqual(expected, result[0])
+
     def test_need_address_path_generation(self):
         state1 = State({'attribute': 'first_state'}, state_name='statetest', address_path=['module1'])
         state2 = State({'attribute': 'second_state'}, state_name='statetest', address_path=['module1'])

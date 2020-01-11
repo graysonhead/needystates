@@ -21,6 +21,11 @@ class TestNeeds(TestCase):
         result = nd.get_short_string()
         self.assertEqual('dbconfmodule.dbConfigManager|server.url.SET=https://example.com', result)
 
+    def test_need_string_generation_falsevalue(self):
+        nd = Need('attribute', StateOperations.SET, address_path=['test'], value=False)
+        result = nd.get_short_string()
+        self.assertEqual('test|attribute.SET=False', result)
+
     def test_long_string_generation(self):
         nd = Need('url', StateOperations.SET, value='https://example.com',
                   description="This sets and does things with other things")

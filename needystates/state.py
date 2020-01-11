@@ -123,6 +123,8 @@ class State(object):
                 smart_append(needs_list, self._determine_needs_substate(attribute,
                                                                         other,
                                                                         strict=strict))
+            elif isinstance(value, bool):
+                smart_append(needs_list, self._determine_needs_bool(attribute, other))
             elif isinstance(value, int) or isinstance(value, str):
                 smart_append(needs_list, self._determine_needs_int_or_str(attribute, other))
         if strict:
@@ -138,6 +140,20 @@ class State(object):
                         metadata=self.metadata
                     ))
         return needs_list
+
+    def _determine_needs_bool(self, attribute, other):
+        our_value = getattr(self, attribute, None)
+        other_value = getattr(other, attribute, None)
+        if our_value != other_value:
+            return self.create_need(
+                attribute,
+                StateOperations.SET,
+                address_path=self.address_path,
+                parent_states=self.parent_states,
+                value=our_value,
+                old_value=other_value,
+                metadata=self.metadata
+            )
 
     def _determine_needs_int_or_str(self, attribute, other):
         """
@@ -176,9 +192,9 @@ class State(object):
             params_dict.update({'address_path': address_path})
         if parent_states:
             params_dict.update({'parent_states': parent_states})
-        if value:
-            params_dict.update({'value': value})
         # Take heed, False is a legitimate value
+        if value or value is False:
+            params_dict.update({'value': value})
         if old_value or old_value is False:
             params_dict.update({'old_value': old_value})
         if metadata:
