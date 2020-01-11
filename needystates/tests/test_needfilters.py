@@ -53,3 +53,15 @@ class TestNeedFilters(TestCase):
         filter = OperationFilter(StateOperations.SET)
         result = filter.check_filter(need)
         self.assertEqual(False, result)
+
+    def test_valuetype_filter_bool(self):
+        need = Need('testval', StateOperations.SET, value=False)
+        filter = ValueTypeFilter(bool)
+        result = filter.check_filter(need)
+        self.assertEqual(True, result)
+
+    def test_valuetype_filter_negative_bool(self):
+        need = Need('testval', StateOperations.SET, value=False)
+        filter = ValueTypeFilter(str)
+        result = filter.check_filter(need)
+        self.assertEqual(False, result)

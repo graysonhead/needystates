@@ -74,3 +74,15 @@ class ParentStatesContainsFilter(NeedFilter):
             return True
         else:
             return False
+
+
+class ValueTypeFilter(NeedFilter):
+
+    def __init__(self, filter_object):
+        self.filter_object = filter_object
+
+    def check_filter(self, need):
+        if isinstance(need.value, self.filter_object):
+            return True
+        else:
+            return False
